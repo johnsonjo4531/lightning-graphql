@@ -1,13 +1,20 @@
 {
   "name": "lightning-graphql",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lite Cache-less GraphQL client with excellent type-support for Node and Browsers.",
   "source": "src/index.ts",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
+  "keywords": [
+    "GraphQL",
+    "client",
+    "typescript",
+    "graphql-codegen"
+  ],
   "repository": {
-    "git": "https://github.com/johnsonjo4531/lightning-graphql"
+    "type": "git",
+    "url": "https://github.com/johnsonjo4531/lightning-graphql"
   },
   "scripts": {
     "dev": "parcel",
