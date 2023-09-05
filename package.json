@@ -1,6 +1,6 @@
 {
   "name": "lightning-graphql",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Lite Cache-less GraphQL client with excellent type-support for Node and Browsers.",
   "source": "src/index.ts",
   "main": "dist/main.js",
@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "parcel",
-    "prepublishOnly": "npm run test",
+    "prepublishOnly": "npm run build && npm run test",
     "preversion": "npm run lint",
     "build": "parcel build",
     "generate": "graphql-codegen --config codegen.yml",
