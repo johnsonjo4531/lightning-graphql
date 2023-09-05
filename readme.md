@@ -1,6 +1,6 @@
 # Lightning GraphQL
 
-![Lightning GraphQL logo](./assets/lightning-graphql.png)
+![Lightning GraphQL logo](https://github.com/johnsonjo4531/lightning-graphql/blob/main/assets/lightning-graphql.png?raw=true)
 
 Lite Cache-less GraphQL client with excellent type-support for Node and Browsers.
 This library's default datafetcher only works with queries and mutations and not subscriptions, so
