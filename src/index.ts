@@ -42,7 +42,7 @@ export function GraphQLClient<T extends { [key: string]: unknown }>({
                 type: x.operation,
               })
             )[0] ??
-            (({}) => {
+            (() => {
               throw new Error("No such Query");
             }),
         ] as const;
