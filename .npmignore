@@ -1,0 +1,6 @@
+.parcel-cache/
+src/__*/
+.editorconfig
+Makefile
+codegen.yml
+jestconfig.json

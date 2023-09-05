@@ -1,0 +1,8 @@
+schema: "./src/__tests__/utils/schema.graphql"
+documents: "./src/__tests__/queries.graphql"
+generates:
+  ./src/__generated__/client-types.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typed-document-node"

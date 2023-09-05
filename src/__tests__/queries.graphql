@@ -1,0 +1,21 @@
+query Books {
+  books {
+    title
+    author
+  }
+}
+
+query Authors {
+  authors
+}
+
+query BookByTitle($title: String!) {
+  findBookByTitle(title: $title) {
+    title
+    author
+  }
+}
+
+mutation Noop {
+  noop
+}
