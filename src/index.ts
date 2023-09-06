@@ -13,14 +13,20 @@ import {
 
 export type { TypedDocumentNode, ResultOf, VariablesOf };
 
-export type GraphQLClientReturn<T extends { [key: string]: unknown }> =
-  OmitDocumentOnKeys<ToQueryable<GetTypedDocumentNodes<T>>>;
+export type GraphQLClientReturn<
+  Context extends Record<string, unknown>,
+  T extends { [key: string]: unknown }
+> = OmitDocumentOnKeys<ToQueryable<Context, GetTypedDocumentNodes<T>>>;
 
-export function GraphQLClient<T extends { [key: string]: unknown }>({
+export function GraphQLClient<
+  Context extends Record<string, unknown>,
+  T extends { [key: string]: unknown } = { [key: string]: unknown }
+>({
   source,
   endpoint,
   fetcher = defaultFetcher,
-}: ImportDataSourceOptions<T>): GraphQLClientReturn<T> {
+  options,
+}: ImportDataSourceOptions<Context, T>): GraphQLClientReturn<Context, T> {
   return Object.fromEntries(
     Object.entries(source)
       .filter((arr: any[]): arr is [string, DefaultTypedDocumentNode] => {
@@ -36,10 +42,11 @@ export function GraphQLClient<T extends { [key: string]: unknown }>({
                 x.kind === Kind.OPERATION_DEFINITION
             )
             .map((x) =>
-              fetcher({
+              fetcher<Context>({
                 endpoint,
                 query,
                 type: x.operation,
+                options,
               })
             )[0] ??
             (() => {
@@ -47,32 +54,53 @@ export function GraphQLClient<T extends { [key: string]: unknown }>({
             }),
         ] as const;
       })
-  ) as unknown as GraphQLClientReturn<T>;
+  ) as unknown as GraphQLClientReturn<Context, T>;
 }
 
 /** A curried fetcher */
-export function defaultFetcher<T extends DefaultTypedDocumentNode>({
+export function defaultFetcher<
+  Context extends Record<string, unknown>,
+  T extends DefaultTypedDocumentNode = DefaultTypedDocumentNode
+>({
   endpoint,
   query,
+  options: overridenOptions,
 }: {
   endpoint: string;
   query: T;
   type: OperationTypeNode;
+  options?: FetcherOptions<Context>;
 }) {
-  return async (variables: VariablesOf<T>) =>
+  const emptyObj = {};
+  return async <Context extends Record<string, unknown>>(
+    variables: VariablesOf<T>,
+    options?: FetcherOptions<Context>
+  ) =>
     fetch(endpoint, {
+      ...(overridenOptions?.fetchOptions ?? emptyObj),
+      ...(options?.fetchOptions ?? emptyObj),
       method: "POST",
       body: JSON.stringify({
         query: typeof query === "string" ? query : print(query),
         variables,
       }),
       headers: {
+        ...(overridenOptions?.fetchOptions?.headers ?? emptyObj),
+        ...(options?.fetchOptions?.headers ?? emptyObj),
         "Content-Type": "application/json",
       },
     }).then((x) => x.json());
 }
 
-export type Fetcher<T extends DefaultTypedDocumentNode> = ({
+type FetcherOptions<Context extends Record<string, unknown>> = {
+  fetchOptions: RequestInit;
+  context: Context;
+};
+
+export type Fetcher = <
+  Context extends Record<string, unknown>,
+  T extends DefaultTypedDocumentNode = DefaultTypedDocumentNode
+>({
   endpoint,
   query,
   type,
@@ -80,12 +108,17 @@ export type Fetcher<T extends DefaultTypedDocumentNode> = ({
   endpoint: string;
   query: T;
   type: OperationTypeNode;
-}) => Queryable<T>;
+  options?: FetcherOptions<Context>;
+}) => Queryable<Context, T>;
 
-export type ImportDataSourceOptions<T extends { [key: string]: unknown }> = {
+export type ImportDataSourceOptions<
+  Context extends Record<string, unknown>,
+  T extends { [key: string]: unknown }
+> = {
   source: T;
   endpoint: string;
-  fetcher?: Fetcher<DefaultTypedDocumentNode>;
+  fetcher?: Fetcher;
+  options?: FetcherOptions<Context>;
 };
 
 type GqlFetchResult<TData = any> = {
@@ -111,8 +144,12 @@ type GetTypedDocumentNodes<R extends { [key: string]: unknown }> = {
   [P in keyof R & string]: OnlyTypedDocumentNode<R[P]>;
 };
 
-type Queryable<T extends DefaultTypedDocumentNode> = (
-  variables: VariablesOf<T>
+type Queryable<
+  Context extends Record<string, unknown>,
+  T extends DefaultTypedDocumentNode
+> = (
+  variables: VariablesOf<T>,
+  options?: FetcherOptions<Context>
 ) => Promise<GqlFetchResult<ResultOf<T>>>;
 
 type OmitDocument<D extends string> = D extends `${infer J & string}Document`
@@ -128,9 +165,12 @@ type GetDefinitionNodesOperation<K extends DefinitionNode> = K extends {
     : never
   : never;
 
-type ToQueryable<T> = T extends Record<string, TypedDocumentNode<any, any>>
+type ToQueryable<
+  Context extends Record<string, unknown>,
+  T = unknown
+> = T extends Record<string, TypedDocumentNode<any, any>>
   ? {
-      [P in keyof T & string]: Queryable<InferTypedDocumentNode<T[P]>>;
+      [P in keyof T & string]: Queryable<Context, InferTypedDocumentNode<T[P]>>;
     }
   : never;
 

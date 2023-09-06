@@ -9,6 +9,19 @@ datafetcher can also fix other things e.g. the queries being cache-less)
 
 **Why?**: I couldn't find a simple way to go from writing graphql queries on my server that wouldn't be cached between requests, and I also wanted a library that didn't compromise on type-safety and great developer experience (DX).
 
+## Table Of Contents
+
+- [Lightning GraphQL](#lightning-graphql)
+  - [Table Of Contents](#table-of-contents)
+  - [External Code Demos:](#external-code-demos)
+  - [Client Examples](#client-examples)
+  - [Minimal Example with Server and Full Type Support](#minimal-example-with-server-and-full-type-support)
+    - [Server Setup](#server-setup)
+    - [Client Setup](#client-setup)
+  - [Supplying your own custom fetcher instead of using the default fetch.](#supplying-your-own-custom-fetcher-instead-of-using-the-default-fetch)
+  - [Supplying fetchOptions.](#supplying-fetchoptions)
+
+
 ## External Code Demos:
 
 [Stackblitz Collection of Demos](https://stackblitz.com/@johnsonjo4531/collections/lightning-graphql)
@@ -47,8 +60,11 @@ We can write our client like so:
 **client.ts**
 ```ts
 import {GraphQLClient} from "lightning-graphql"
+// Generated from graphql-codegen with TypedDocumentNodes.
+import * as source from "./__generated__/client-types";
+
 const client = GraphQLClient({
-  source: await import("./__generated__/client-types"),
+  source,
   endpoint: serverURL,
 });
 
@@ -129,7 +145,7 @@ export const resolvers = {
   },
 };
 
-export const testServer = (listen: ListenOptions) => {
+const server = (listen: ListenOptions) => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -145,6 +161,11 @@ export const testServer = (listen: ListenOptions) => {
     },
   };
 };
+
+const port = 3322;
+server({
+  port: 3322
+}).listen();
 ```
 
 ### Client Setup
@@ -179,10 +200,22 @@ Then we generate types for the Schema and Query:
 
 By first installing packages for codegen:
 
+<details>
+<summary>
+Click for install instructions
+</summary>
 
+Choose an npm or yarn install:
+
+**npm**
 ```bash
-npm i @graphql-codegen/typescript @graphql-codegen/typescript-operations @graphql-codegen/typed-document-node
+npm i -D @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen/typescript-operations @graphql-codegen/typed-document-node
 ```
+**yarn**:
+```bash
+yarn add -D @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen/typescript-operations @graphql-codegen/typed-document-node
+```
+</details>
 
 Then setting up the following **./codegen.yml**:
 
@@ -222,7 +255,9 @@ npm run generate
 Then we can finally write our Queries in a **./src/client.ts** file where we get all the type-safe goodness!
 
 ```ts
-import {GraphQLClient} from "lightning-graphql"
+import {GraphQLClient} from "lightning-graphql";
+
+const serverURL = "http://localhost:3322/graphql";
 const client = GraphQLClient({
   source: await import("./__generated__/client-types"),
   endpoint: serverURL,
@@ -238,7 +273,7 @@ const authors = await client.authors({}); // get all Authors
 ```
 
 
-## Supplying your own fetcher instead of using the default fetch.
+## Supplying your own custom fetcher instead of using the default fetch.
 
 ```ts
 import {GraphQLClient} from "lightning-graphql"
@@ -246,9 +281,42 @@ const client = GraphQLClient({
   source: await import("./__generated__/client-types"),
   endpoint: serverURL,
   fetcher ({endpoint, query, type}) {
-    return async (variables) => {
+    return async (variables, options) => {
       // Go Fetch Your Data!
     }
   }
 });
+```
+
+## Supplying fetchOptions.
+
+
+There are two ways to supply fetchOptions:
+
+```ts
+import {GraphQLClient} from "lightning-graphql"
+
+
+
+// First way is to send it into the GraphQLClient
+const client = GraphQLClient({
+  source: await import("./__generated__/client-types"),
+  endpoint: serverURL,
+  options: {
+    // Send in a context if you have a custom fetcher.
+    context: {},
+    fetchOptions: {
+      // extra fetch options any options given to fetch's second parameter work here.
+    }
+  }
+});
+
+// First way is to send it into the GraphQLClient
+const books = await client.books({}, {
+  // Send in a context.
+  context: {},
+  fetchOptions: {
+    // Extra fetch options.
+  }
+})
 ```
