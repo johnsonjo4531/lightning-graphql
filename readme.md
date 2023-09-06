@@ -9,6 +9,11 @@ datafetcher can also fix other things e.g. the queries being cache-less)
 
 **Why?**: I couldn't find a simple way to go from writing graphql queries on my server that wouldn't be cached between requests, and I also wanted a library that didn't compromise on type-safety and great developer experience (DX).
 
+## External Code Demos:
+
+[Stackblitz Collection of Demos](https://stackblitz.com/@johnsonjo4531/collections/lightning-graphql)
+
+
 ## Client Examples
 
 Given a **queries.graphql** like so that has been generated to a file called `./__generated__/client-types.ts`:
@@ -47,7 +52,7 @@ const client = GraphQLClient({
   endpoint: serverURL,
 });
 
-// All these methods are camelcased named versions of queries and mutations written in the above queries.ts file.
+// All these methods are camelcased named versions of queries and mutations written in the above queries file.
 // The methods below also come with great type-hints and safety.
 const book = await client.bookByTitle({
   title: "The Great Gatsby",
@@ -144,7 +149,7 @@ export const testServer = (listen: ListenOptions) => {
 
 ### Client Setup
 
-With the server finished we then write our query in **./src/queries.ts**
+With the server finished we then write our query in **./src/queries.graphql**
 
 ```gql
 query Books {
@@ -223,7 +228,7 @@ const client = GraphQLClient({
   endpoint: serverURL,
 });
 
-// All these methods are camelcased named versions of queries and mutations written in the above queries.ts file.
+// All these methods are camelcased named versions of queries and mutations written in the above queries file.
 const book = await client.bookByTitle({
   title: "The Great Gatsby",
 }); // get Book by title
