@@ -94,7 +94,7 @@ export function defaultFetcher<
 
 type FetcherOptions<Context extends Record<string, unknown>> = {
   fetchOptions: RequestInit;
-  context: Context;
+  context?: Context;
 };
 
 export type Fetcher = <

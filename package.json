@@ -1,6 +1,6 @@
 {
   "name": "lightning-graphql",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Lite Cache-less GraphQL client with excellent type-support for Node and Browsers.",
   "source": "src/index.ts",
   "main": "dist/main.js",
