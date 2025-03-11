@@ -13,8 +13,10 @@ type Query {
   books: [Book]
   authors: [String]
   findBookByTitle(title: String!): Book
+  isLoggedIn: Boolean!
 }
 
 type Mutation {
   noop: Boolean!
+  login: Boolean!
 }

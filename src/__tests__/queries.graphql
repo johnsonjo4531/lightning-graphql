@@ -19,3 +19,11 @@ query BookByTitle($title: String!) {
 mutation Noop {
   noop
 }
+
+mutation Login {
+  login
+}
+
+query IsLoggedIn {
+  isLoggedIn
+}

@@ -23,6 +23,7 @@ export type Book = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  login: Scalars['Boolean']['output'];
   noop: Scalars['Boolean']['output'];
 };
 
@@ -31,6 +32,7 @@ export type Query = {
   authors?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   books?: Maybe<Array<Maybe<Book>>>;
   findBookByTitle?: Maybe<Book>;
+  isLoggedIn: Scalars['Boolean']['output'];
 };
 
 
@@ -60,8 +62,20 @@ export type NoopMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type NoopMutation = { __typename?: 'Mutation', noop: boolean };
 
+export type LoginMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: boolean };
+
+export type IsLoggedInQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type IsLoggedInQuery = { __typename?: 'Query', isLoggedIn: boolean };
+
 
 export const BooksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Books"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"books"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"author"}}]}}]}}]} as unknown as DocumentNode<BooksQuery, BooksQueryVariables>;
 export const AuthorsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"authors"}}]}}]} as unknown as DocumentNode<AuthorsQuery, AuthorsQueryVariables>;
 export const BookByTitleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"BookByTitle"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"title"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findBookByTitle"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"title"},"value":{"kind":"Variable","name":{"kind":"Name","value":"title"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"author"}}]}}]}}]} as unknown as DocumentNode<BookByTitleQuery, BookByTitleQueryVariables>;
 export const NoopDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Noop"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"noop"}}]}}]} as unknown as DocumentNode<NoopMutation, NoopMutationVariables>;
+export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
+export const IsLoggedInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"IsLoggedIn"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isLoggedIn"}}]}}]} as unknown as DocumentNode<IsLoggedInQuery, IsLoggedInQueryVariables>;
