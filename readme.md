@@ -310,7 +310,7 @@ GraphQLClient({
     return async (...args2) => {
       return (
         defaultFetcher as DefaultFetcher<Record<string, unknown>, typeof source>
-      )(...args)(...args2).then((x) => x);
+      )(...args)(...args2);
     };
   },
   options: {
@@ -320,10 +320,6 @@ GraphQLClient({
     cookieStore,
   },
 });
-```
-
-```
-
 ```
 
 ## Supplying fetchOptions.
